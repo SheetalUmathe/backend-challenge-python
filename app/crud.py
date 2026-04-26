@@ -10,6 +10,9 @@ from . import models, schemas
 class UnableToBook(Exception):
     pass
 
+class UnableToExtend(Exception):
+    pass
+
 
 def create_booking(db: Session, booking: schemas.BookingBase) -> models.Booking:
     is_possible, reason = is_booking_possible(db=db, booking=booking)
@@ -93,7 +96,7 @@ def extend_booking(db: Session, booking_id: int, additional_nights: int) -> mode
 
     is_possible, reason = is_booking_possible(db=db, booking=extended, exclude_booking_id=booking_id)
     if not is_possible:
-        raise UnableToExtend('Cannot extend booking: {reason}')
+        raise UnableToExtend(f'Cannot extend booking: {reason}')
 
     booking.number_of_nights += additional_nights
     db.commit()
