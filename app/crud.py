@@ -53,7 +53,6 @@ def is_booking_possible(db: Session, booking: schemas.BookingBase, exclude_booki
     # A conflict exists when: existing.check_in < new.checkout AND existing.checkout > new.check_in
     new_checkout = booking.check_in_date + datetime.timedelta(days=booking.number_of_nights)
 
-
     # SQLite doesn't support date arithmetic natively in SQLAlchemy expressions easily,
     # so we fetch only same-unit bookings and filter them in Python. In a production environment with a more powerful DB, the above query would be preferred.
     same_unit_bookings = db.execute(
