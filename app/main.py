@@ -8,11 +8,6 @@ from . import crud, models, schemas
 from .crud import UnableToBook
 from .database import SessionLocal, engine
 
-from pydantic import BaseModel
-
-class ExtendRequest(BaseModel):
-    additional_nights: int
-
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -40,7 +35,7 @@ def create_booking(booking: schemas.BookingBase, db: Session = Depends(get_db)):
                             detail=str(unable_to_book))
 
 @app.patch("/api/v1/booking/{booking_id}/extend", response_model=schemas.BookingResponse)  # was BookingBase
-def extend_booking(booking_id: int, body: ExtendRequest, db: Session = Depends(get_db)):
+def extend_booking(booking_id: int, body: schemas.ExtendRequest, db: Session = Depends(get_db)):
     try:
         return crud.extend_booking(db=db, booking_id=booking_id, additional_nights=body.additional_nights)
     except crud.UnableToExtend as e:

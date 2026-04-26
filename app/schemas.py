@@ -13,3 +13,6 @@ class BookingBase(BaseModel):
 
 class BookingResponse(BookingBase):
     id: int
+
+class ExtendRequest(BaseModel):
+    additional_nights: int

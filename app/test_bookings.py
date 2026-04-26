@@ -142,6 +142,7 @@ def test_different_guest_same_unit_booking_different_date(test_db):
     assert response.status_code == 400, response.text
     assert response.json()['detail'] == 'For the given check-in date, the unit is already occupied'
 
+@pytest.mark.freeze_time('2023-05-21')
 def test_extend_booking(test_db):
     # Create a booking
     response = client.post("/api/v1/booking", json=GUEST_A_UNIT_1)
@@ -154,6 +155,7 @@ def test_extend_booking(test_db):
     assert response.json()["number_of_nights"] == GUEST_A_UNIT_1["number_of_nights"] + 3
 
 
+@pytest.mark.freeze_time('2023-05-21')
 def test_extend_booking_blocked_by_next_booking(test_db):
     # GuestA in unit 1 for 5 nights starting today
     response = client.post("/api/v1/booking", json=GUEST_A_UNIT_1)

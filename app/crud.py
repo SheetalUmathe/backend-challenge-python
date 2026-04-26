@@ -1,7 +1,7 @@
 import datetime
 from typing import Tuple
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import models, schemas
@@ -9,6 +9,7 @@ from . import models, schemas
 
 class UnableToBook(Exception):
     pass
+
 
 class UnableToExtend(Exception):
     pass
@@ -52,13 +53,6 @@ def is_booking_possible(db: Session, booking: schemas.BookingBase, exclude_booki
     # A conflict exists when: existing.check_in < new.checkout AND existing.checkout > new.check_in
     new_checkout = booking.check_in_date + datetime.timedelta(days=booking.number_of_nights)
 
-    existing = db.execute(
-        select(models.Booking).where(
-            models.Booking.unit_id == booking.unit_id,
-            models.Booking.check_in_date < new_checkout,
-            (models.Booking.check_in_date + func.cast(models.Booking.number_of_nights, Integer)) > booking.check_in_date,
-            )
-    ).scalars().first() if False else None  # placeholder — see note below
 
     # SQLite doesn't support date arithmetic natively in SQLAlchemy expressions easily,
     # so we fetch only same-unit bookings and filter them in Python. In a production environment with a more powerful DB, the above query would be preferred.
